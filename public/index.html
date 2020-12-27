@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Hoax Analyzer</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.min.js"></script>
+	<!--===============================================================================================-->
+		<link rel="icon" type="image/png" href="./images/icons/favicon.ico"/>
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="https://innotoma.fra1.cdn.digitaloceanspaces.com/antihoax/icon-font.min.css">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="https://innotoma.fra1.cdn.digitaloceanspaces.com/antihoax/animate.min.css">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hamburgers/1.1.3/hamburgers.min.css">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animsition/4.0.2/css/animsition.min.css">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css">
+	<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="https://innotoma.fra1.cdn.digitaloceanspaces.com/antihoax/util.min.css">
+		<link rel="stylesheet" type="text/css" href="https://innotoma.fra1.cdn.digitaloceanspaces.com/antihoax/main.min.css">
+	<!--===============================================================================================-->
+	</head>
+	<body>
+		<div class="container-contact100">
+			<div class="wrap-contact100">
+				<form class="contact100-form validate-form">
+					<span class="contact100-form-title">
+						Analyze Hoax Sentence
+					</span>
+					<!-- div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+						<label class="label-input100" for="email">
+							<img src="images/icons/symbol-01.png" alt="SYMBOL-MAIL">
+						</label>
+							<input id="email" class="input100" type="text" name="email" placeholder="Your Email Address">
+						<span class="focus-input100"></span>
+					</div -->
+					<div class="wrap-input100 validate-input" data-validate="Sentence is required">
+						<textarea class="input100" name="sentence" placeholder="Sentence" style="resize:none;"></textarea>
+						<span class="focus-input100"></span>
+					</div>
+					<div class="container-contact100-form-btn">
+						<button class="contact100-form-btn">
+							Analyze
+						</button>
+					</div>
+				</form>
+				<div>
+					<span class="contact100-process">
+						<b>Process:</b>
+					</span>
+					<pre id="result" class="input100"></pre>
+				</div>
+			</div>
+		</div>
+
+	<!--===============================================================================================-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<!--===============================================================================================-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/animsition/4.0.2/js/animsition.min.js"></script>
+	<!--===============================================================================================-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.6.0/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<!--===============================================================================================-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+	<!--===============================================================================================-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/moment.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js"></script>
+	<!--===============================================================================================-->
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+	<!--===============================================================================================-->
+		<script src="https://innotoma.fra1.cdn.digitaloceanspaces.com/antihoax/countdowntime.min.js"></script>
+		<script src="https://innotoma.fra1.cdn.digitaloceanspaces.com/antihoax/main.min.js"></script>
+	</body>
+</html>

@@ -5,18 +5,8 @@
   var input = $(".validate-input .input100");
   var sentenceInput = "";
   var socketId = null;
-  var data = {
-    "data": {
-      "x": "1",
-      "y": "1",
-      "url": "http://url.com"
-    },
-    "event": "start",
-    "show": 1,
-    "id": 50
-  };
 
-  var socket = io("http://localhost:8558/");
+  var socket = io();
 
   socket.on('time server', function (msg) {
     // $('#messages').append($('<li>').text(msg));
@@ -107,7 +97,7 @@
             }
           } else {
             Swal.fire({
-              title: 'NO DESC.',
+              title: 'NOT NEWS',
               text: res.message,
               icon: 'warning'
             })

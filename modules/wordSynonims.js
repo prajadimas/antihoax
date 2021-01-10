@@ -30,7 +30,7 @@ module.exports = function wordSynonims(token) {
             // console.log('Token: ', token[countToken])
             outputToken[countToken].synonim.push(token[countToken].token)
             // var response = await axios.get('http://tesaurus.kemdikbud.go.id/tematis/lema/' + token[countToken].token + '/' + kelasTesaurus[token[countToken].tag])
-            var response = await axios.get('http://www.sinonimkata.com/b-' + token[countToken].token)
+            var response = await axios.get('http://www.sinonimkata.com/b-' + encodeURI(token[countToken].token))
             // handle success
             // console.log(response.data)
             const $ = cheerio.load(response.data)

@@ -14,13 +14,11 @@ module.exports = function neoNewsMatching(tokens, news) {
   var countMatch = []
   news.map(x => {
     tempRes.push({
-      peristiwa: 0,
-      objek: 0,
+      fakta: 0,
       deskripsi: 0
     })
     newsMatching.push({
-      peristiwa: 0,
-      objek: 0,
+      fakta: 0,
       deskripsi: 0
     })
     countMatch.push(0)
@@ -48,13 +46,13 @@ module.exports = function neoNewsMatching(tokens, news) {
   })
   // console.log('News Matching: ', newsMatching)
   newsMatching.map((x, idx) => {
-    x.peristiwa === 0 ? tempRes[idx].peristiwa = 1 : tempRes[idx].peristiwa = tempRes[idx].peristiwa
-    x.objek === 0 ? tempRes[idx].objek = 1 : tempRes[idx].objek = tempRes[idx].objek
+    x.fakta === 0 ? tempRes[idx].fakta = 1 : tempRes[idx].fakta = tempRes[idx].fakta
+    // x.objek === 0 ? tempRes[idx].objek = 1 : tempRes[idx].objek = tempRes[idx].objek
     x.deskripsi === 0 ? tempRes[idx].deskripsi = 1 : tempRes[idx].deskripsi = tempRes[idx].deskripsi
   })
   // console.log('Temp Res: ', tempRes)
   for (var i = 0; i < tempRes.length; i++) {
-    countMatch[i] = tempRes[i].peristiwa + tempRes[i].objek + tempRes[i].deskripsi
+    countMatch[i] = tempRes[i].fakta + tempRes[i].deskripsi
   }
   // console.log('Result Value: ', tempRes[countMatch.indexOf(Math.max(...countMatch))])
   return tempRes[countMatch.indexOf(Math.max(...countMatch))]

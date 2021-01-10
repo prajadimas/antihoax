@@ -11,20 +11,24 @@ const sw = require('stopword')
 module.exports = function fixingFeatures(x) {
   // console.log('X: ', x)
   var allFeatures = []
-  var deskripsiRemovedStopword = sw.removeStopwords(x.deskripsi, sw.id)
-  allFeatures.push({
-    token: x.peristiwa,
-    tag: 'peristiwa'
-  })
-  allFeatures.push({
-    token: x.objek,
-    tag: 'objek'
-  })
-  for (var i = 0; i < deskripsiRemovedStopword.length; i++) {
+  // var deskripsiRemovedStopword = sw.removeStopwords(x.deskripsi, sw.id)
+  for (var i = 0; i < x.fakta.length; i++) {
+    allFeatures.push({
+      token: x.fakta[i].replace(/\.$/, ''),
+      tag: 'fakta'
+    })
+  }
+  for (var i = 0; i < x.deskripsi.length; i++) {
+    allFeatures.push({
+      token: x.deskripsi[i].replace(/\.$/, ''),
+      tag: 'deskripsi'
+    })
+  }
+  /* for (var i = 0; i < deskripsiRemovedStopword.length; i++) {
     allFeatures.push({
       token: deskripsiRemovedStopword[i].replace(/\.$/, ''),
       tag: 'deskripsi'
     })
-  }
+  } */
   return allFeatures
 }

@@ -34,22 +34,23 @@ module.exports = async function (req, res, next) {
     var foldedCase = caseFolding(req.body.text)
     console.log('Folded Case: ', foldedCase)
     socketId ? io.to(socketId).emit('process', { step: 'FOLDED CASE:\n', out: foldedCase + '\n' }) : socketId = socketId
-    fs.writeFileSync('./output.txt', 'FOLDED CASE:\n')
+    fs.appendFileSync('./output.txt', 'FOLDED CASE:\n')
     fs.appendFileSync('./output.txt', foldedCase + '\n')
-    var normalizedText = await normalisasiProsaAI(foldedCase)
-    console.log('Normalized Text: ', normalizedText)
-    socketId ? io.to(socketId).emit('process', { step: 'NORMALIZED TEXT:\n', out: normalizedText + '\n' }) : socketId = socketId
-    fs.appendFileSync('./output.txt', 'NORMALIZED TEXT:\n')
-    fs.appendFileSync('./output.txt', normalizedText + '\n')
+    // var normalizedText = await normalisasiProsaAI(foldedCase)
+    // console.log('Normalized Text: ', normalizedText)
+    // socketId ? io.to(socketId).emit('process', { step: 'NORMALIZED TEXT:\n', out: normalizedText + '\n' }) : socketId = socketId
+    // fs.appendFileSync('./output.txt', 'NORMALIZED TEXT:\n')
+    // fs.appendFileSync('./output.txt', normalizedText + '\n')
     // var removedPunctText = punctuationRemoval(normalizedText)
     // console.log('Removed Punct. Text: ', removedPunctText)
-    var stopwordedText = stopwordId(normalizedText)
-    console.log('Stopworded Text: ', stopwordedText)
-    socketId ? io.to(socketId).emit('process', { step: 'STOPWORD TEXT:\n', out: stopwordedText + '\n' }) : socketId = socketId
-    fs.appendFileSync('./output.txt', 'STOPWORD TEXT:\n')
-    fs.appendFileSync('./output.txt', stopwordedText + '\n')
+    // var stopwordedText = stopwordId(normalizedText)
+    // console.log('Stopworded Text: ', stopwordedText)
+    // socketId ? io.to(socketId).emit('process', { step: 'STOPWORD TEXT:\n', out: stopwordedText + '\n' }) : socketId = socketId
+    // fs.appendFileSync('./output.txt', 'STOPWORD TEXT:\n')
+    // fs.appendFileSync('./output.txt', stopwordedText + '\n')
+    var posTaggedText = await posTaggingStanza(foldedCase)
     // var posTaggedText = await posTaggingStanza(normalizedText)
-    var posTaggedText = await posTaggingStanza(stopwordedText)
+    // var posTaggedText = await posTaggingStanza(stopwordedText)
     console.log('POS Tagged Text: ', posTaggedText)
     socketId ? io.to(socketId).emit('process', { step: 'DEPENDENCY PARSED TEXT:\n', out: JSON.stringify(posTaggedText, null, 2) + '\n' }) : socketId = socketId
     fs.appendFileSync('./output.txt', 'DEPENDENCY PARSED TEXT:\n')
@@ -65,10 +66,10 @@ module.exports = async function (req, res, next) {
       // socketId ? io.to(socketId).emit('process', { step: 'RESULT:\n', out: JSON.stringify({ message: 'Not a description or a self description' }, null, 2) + '\n' }) : socketId = socketId
       fs.appendFileSync('./output.txt', 'RESULT:\n')
       fs.appendFileSync('./output.txt', JSON.stringify({
-        message: 'Not a description or a self description'
+        message: 'Not a news'
       }, null, 2) + '\n')
       res.status(200).json({
-        message: 'Not a description or a self description'
+        message: 'Not a news'
       })
     } else {
       var fixedFeatures = fixingFeatures(features)
@@ -106,7 +107,7 @@ module.exports = async function (req, res, next) {
         socketId ? io.to(socketId).emit('process', { step: 'NEWS MATCHING:\n', out: JSON.stringify(matchingNews, null, 2) + '\n' }) : socketId = socketId
         fs.appendFileSync('./output.txt', 'NEWS MATCHING:\n')
         fs.appendFileSync('./output.txt', JSON.stringify(matchingNews, null, 2) + '\n')
-        if (matchingNews.peristiwa === 1 && matchingNews.objek === 1 && matchingNews.deskripsi === 1) {
+        if (matchingNews.fakta === 1 && matchingNews.deskripsi === 1) {
           fs.appendFileSync('./output.txt', 'RESULT:\n')
           fs.appendFileSync('./output.txt', JSON.stringify({
             result: 'NOT A HOAX',
@@ -120,11 +121,11 @@ module.exports = async function (req, res, next) {
           fs.appendFileSync('./output.txt', 'RESULT:\n')
           fs.appendFileSync('./output.txt', JSON.stringify({
             result: 'HOAX',
-            message: 'There is unmatch between peristiwa, objek or deskripsi within the news reported'
+            message: 'There is unmatch between fakta and or deskripsi within the news reported'
           }, null, 2) + '\n')
           res.status(200).json({
             result: 'HOAX',
-            message: 'There is unmatch between peristiwa, objek or deskripsi within the news reported'
+            message: 'There is unmatch between fakta and or deskripsi within the news reported'
           })
         }
       } else {
@@ -140,6 +141,7 @@ module.exports = async function (req, res, next) {
       }
     }
   } catch (err) {
+    console.error(err)
     next(createError(500))
   }
 }

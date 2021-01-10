@@ -4,132 +4,112 @@
 const removePunctuation = require('remove-punctuation')
 
 /**
- * Feature Extraction
+ * Features Extraction
  *
  * @param {String} taggedSentence The POS tagged sentence needs to be feature extracted
  */
 module.exports = function featuresExtraction(taggedSentence) {
-  var sentenceType = ''
-  var descriptors = []
+  // var sentenceType = ''
+  const questionWords = ['apa', 'siapa', 'kapan', 'dimana', 'kemana', 'darimana', 'mengapa', 'kenapa', 'bagaimana']
   var rootToken = {
     token: '',
     id: 0
   }
   var features = {
-    peristiwa: '',
-    objek: '',
+    fakta: [],
     deskripsi: []
   }
   console.log('Tagged Sentence: ', taggedSentence.tokens)
   var eachToken = taggedSentence.tokens
+  // is it a question
+  if (eachToken.some(r => r.token.includes(questionWords))) {
+    console.log('This is a question')
+    return {}
+  }
   for (var i = 0; i < eachToken.length; i++) {
-    // if (eachToken[i])
+    // is it a question
+    if (eachToken[i].token.substr(eachToken[i].token.length - 3, 3) === 'kah') {
+      console.log('This is a question')
+      return {}
+    }
+    // is it a self description
     if (eachToken[i].pos === 'PRON') {
       if (eachToken[i].token === 'aku') {
+        console.log('This is a self description')
         return {}
       } else if (eachToken[i].token === 'saya') {
+        console.log('This is a self description')
         return {}
       } else if (eachToken[i].token === 'kami') {
+        console.log('This is a self description')
+        return {}
+      } else if (eachToken[i].token === 'menurutku') {
+        console.log('This is a self description')
         return {}
       }
     }
+    // is it includes fakta needs to be checked
     if (eachToken[i].parent_rel === 'root') {
       if (eachToken[i].pos === 'VERB') {
-        features.peristiwa = eachToken[i].token
+        features.deskripsi.push(eachToken[i].token)
         rootToken.token = eachToken[i].token
         rootToken.id = eachToken[i].id
-        if (eachToken[i].token.substring(0, 3) === 'ber' || eachToken[i].token.substring(0, 3) === 'ter') {
-          sentenceType = 'aktif intransitif'
-        } else if (eachToken[i].token.substring(0, 2) === 'me') {
-          sentenceType = 'aktif transitif'
-        } else if (eachToken[i].token.substring(0, 2) === 'di') {
-          if (eachToken[i].id === 1) {
-            sentenceType = 'inversi'
-          } else {
-            sentenceType = 'pasif'
-          }
-        } else {
-          sentenceType = 'aktif transitif'
-        }
+      } else if (eachToken[i].pos === 'NOUN') {
+        features.fakta.push(eachToken[i].token)
+        rootToken.token = eachToken[i].token
+        rootToken.id = eachToken[i].id
+      } else if (eachToken[i].pos === 'PROPN') {
+        features.fakta.push(eachToken[i].token)
+        rootToken.token = eachToken[i].token
+        rootToken.id = eachToken[i].id
+      } else {
+        console.log('This is not a fact to be checked')
+        return {}
+      }
+    } else {
+      if (eachToken[i].parent_rel === 'obj') {
+        features.fakta.push(eachToken[i].token)
       }
     }
   }
-  if (features.peristiwa === '') {
+  if (features.fakta.length === 0) {
+    console.log('This is not a fact to be checked')
     return {}
     // console.log('Hasil: Narasi Tidak terdapat Peristiwa')
   } else {
     console.log('Root: ', rootToken)
-    console.log('Sentence Type: ', sentenceType)
-    if (sentenceType === 'aktif transitif') {
-      // for (var i = (rootToken.id - 1); i < eachToken.length; i++) {
-      for (var i = 0; i < eachToken.length; i++) {
-        if (eachToken[i].parent_rel === 'obj') {
-          if (features.objek === '') {
-            features.objek = eachToken[i].token
-          }
-        }
-      }
-    } else if (sentenceType === 'pasif') {
-      // for (var i = 0; i < (rootToken.id - 1); i++) {
-      for (var i = 0; i < eachToken.length; i++) {
-        if (eachToken[i].parent_rel === 'obj' || eachToken[i].parent_rel.includes('subj')) {
-        // if (eachToken[i].parent_rel === 'obj') {
-          if (features.objek === '') {
-            features.objek = eachToken[i].token
-          } else {
-            if (eachToken[i].parent_rel === 'obj') {
-              features.objek = eachToken[i].token
-            }
-          }
-        }
-      }
-    } else if (sentenceType === 'inversi') {
-      for (var i = (rootToken.id - 1); i < eachToken.length; i++) {
-        if (eachToken[i].parent_rel === 'obj') {
-          if (features.objek === '') {
-            features.objek = eachToken[i].token
-          }
-        }
-      }
-    } else {
-      for (var i = 0; i < eachToken.length; i++) {
-        if (eachToken[i].parent_rel === 'obj') {
-          if (features.objek === '') {
-            features.objek = eachToken[i].token
-          }
-        }
-      }
-    }
     for (var i = 0; i < eachToken.length; i++) {
-      if (eachToken[i].pos === 'NOUN') {
-        if (eachToken[i].token !== features.objek) {
+      if (eachToken[i].pos === 'VERB') {
+        if (eachToken[i].token !== features.deskripsi[0]) {
+          features.deskripsi.push(eachToken[i].token)
+        }
+      } else if (eachToken[i].pos === 'NOUN') {
+        if (!features.fakta.some(r => r.includes(eachToken[i].token))) {
           features.deskripsi.push(eachToken[i].token)
         }
       } else if (eachToken[i].pos === 'PROPN') {
-        if (eachToken[i].token !== features.objek) {
+        if (!features.fakta.some(r => r.includes(eachToken[i].token))) {
           features.deskripsi.push(eachToken[i].token)
         }
       } else if (eachToken[i].pos === 'NUM') {
-        if (eachToken[i].token !== features.objek) {
-          features.deskripsi.push(eachToken[i].token)
-        }
+        features.deskripsi.push(eachToken[i].token)
       } else if (eachToken[i].pos === 'ADV') {
-        if (eachToken[i].token !== features.objek) {
-          features.deskripsi.push(eachToken[i].token)
-        }
+        features.deskripsi.push(eachToken[i].token)
       } else if (eachToken[i].pos === 'ADJ') {
-        if (eachToken[i].token !== features.objek) {
-          features.deskripsi.push(eachToken[i].token)
-        }
-      } else if (eachToken[i].pos === 'VERB') {
-        if (eachToken[i].token !== features.peristiwa) {
-          features.deskripsi.push(eachToken[i].token)
-        }
+        features.deskripsi.push(eachToken[i].token)
       }
     }
     // features.deskripsi = descriptors.join(' ')
-    features.peristiwa = removePunctuation(features.peristiwa)
-    features.objek = removePunctuation(features.objek)
+    // features.peristiwa = removePunctuation(features.peristiwa)
+    // features.objek = removePunctuation(features.objek)
+    for (var i = 0; i < features.fakta.length; i++) {
+      features.fakta[i] = removePunctuation(features.fakta[i])
+      // features.fakta[i].replace(/`“/g, '')
+    }
+    for (var i = 0; i < features.deskripsi.length; i++) {
+      features.deskripsi[i] = removePunctuation(features.deskripsi[i])
+      // features.deskripsi[i].replace(/`“/g, '')
+    }
     // console.log('Peristiwa: ', features.peristiwa)
     // console.log('Objek: ', features.objek)
     // console.log('Deskripsi: ', features.deskripsi)

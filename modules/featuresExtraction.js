@@ -10,7 +10,9 @@ const removePunctuation = require('remove-punctuation')
  */
 module.exports = function featuresExtraction(taggedSentence) {
   // var sentenceType = ''
+  const regexList = /[‘“’”'"]+/g
   const questionWords = ['apa', 'siapa', 'kapan', 'dimana', 'kemana', 'darimana', 'mengapa', 'kenapa', 'bagaimana']
+  var quotationMark = 0
   var rootToken = {
     token: '',
     id: 0
@@ -27,25 +29,33 @@ module.exports = function featuresExtraction(taggedSentence) {
     return {}
   }
   for (var i = 0; i < eachToken.length; i++) {
+    if (eachToken[i].token.match(regexList)) {
+      // console.log('Have regex')
+      quotationMark++
+    }
+  }
+  for (var i = 0; i < eachToken.length; i++) {
     // is it a question
     if (eachToken[i].token.substr(eachToken[i].token.length - 3, 3) === 'kah') {
       console.log('This is a question')
       return {}
     }
     // is it a self description
-    if (eachToken[i].pos === 'PRON') {
-      if (eachToken[i].token === 'aku') {
-        console.log('This is a self description')
-        return {}
-      } else if (eachToken[i].token === 'saya') {
-        console.log('This is a self description')
-        return {}
-      } else if (eachToken[i].token === 'kami') {
-        console.log('This is a self description')
-        return {}
-      } else if (eachToken[i].token === 'menurutku') {
-        console.log('This is a self description')
-        return {}
+    if (quotationMark === 0) {
+      if (eachToken[i].pos === 'PRON') {
+        if (eachToken[i].token === 'aku') {
+          console.log('This is a self description')
+          return {}
+        } else if (eachToken[i].token === 'saya') {
+          console.log('This is a self description')
+          return {}
+        } else if (eachToken[i].token === 'kami') {
+          console.log('This is a self description')
+          return {}
+        } else if (eachToken[i].token === 'menurutku') {
+          console.log('This is a self description')
+          return {}
+        }
       }
     }
     // is it includes fakta needs to be checked
@@ -68,6 +78,8 @@ module.exports = function featuresExtraction(taggedSentence) {
       }
     } else {
       if (eachToken[i].parent_rel === 'obj') {
+        features.fakta.push(eachToken[i].token)
+      } else if (eachToken[i].parent_rel.includes('nsubj')) {
         features.fakta.push(eachToken[i].token)
       }
     }
@@ -103,10 +115,12 @@ module.exports = function featuresExtraction(taggedSentence) {
     // features.peristiwa = removePunctuation(features.peristiwa)
     // features.objek = removePunctuation(features.objek)
     for (var i = 0; i < features.fakta.length; i++) {
+      features.fakta[i] = features.fakta[i].toString().toLowerCase()
       features.fakta[i] = removePunctuation(features.fakta[i])
       // features.fakta[i].replace(/`“/g, '')
     }
     for (var i = 0; i < features.deskripsi.length; i++) {
+      features.deskripsi[i] = features.deskripsi[i].toString().toLowerCase()
       features.deskripsi[i] = removePunctuation(features.deskripsi[i])
       // features.deskripsi[i].replace(/`“/g, '')
     }

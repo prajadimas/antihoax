@@ -48,6 +48,7 @@ module.exports = async function (req, res, next) {
     // socketId ? io.to(socketId).emit('process', { step: 'STOPWORD TEXT:\n', out: stopwordedText + '\n' }) : socketId = socketId
     // fs.appendFileSync('./output.txt', 'STOPWORD TEXT:\n')
     // fs.appendFileSync('./output.txt', stopwordedText + '\n')
+    // var posTaggedText = await posTaggingStanza(req.body.text)
     var posTaggedText = await posTaggingStanza(foldedCase)
     // var posTaggedText = await posTaggingStanza(normalizedText)
     // var posTaggedText = await posTaggingStanza(stopwordedText)
